@@ -7,6 +7,11 @@ import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { globalStyles } from "../../styles/index";
+import { useHistory } from "react-router-dom";
+
+interface iResponse {
+    message: string
+}
 
 const useStyles = makeStyles((theme: Theme) => 
     createStyles({
@@ -27,16 +32,19 @@ const useStyles = makeStyles((theme: Theme) =>
         }
     })
 );
-export default function Login() {
+export default function Login(): JSX.Element {
     const globalClass = globalStyles();
     const classes = useStyles();
+    const history = useHistory();
 
-    const [uname, setUname] = useState('');
-    const [pwd, setPwd] = useState('');
+    const [uname, setUname] = useState<string>('');
+    const [pwd, setPwd] = useState<string>('');
+    const [response, setResponse] = useState<iResponse | null>(null);
 
     const handleLogin = async () => {
         const resp = await fetch("http://localhost:5000/user/login", {
             method: "POST",
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -46,7 +54,8 @@ export default function Login() {
             })
         });
 
-        // resp.status === 202 && Router.push('/');
+        setResponse(await resp.json());
+        resp.status === 202 && history.push('/');
     }
 
     return (
@@ -56,7 +65,7 @@ export default function Login() {
                     <Grid container spacing={3} alignItems="center" className={classes.grid}>
                         <Grid item xs={12} md={6} lg={3}>
                             <Typography variant="h4" className={classes.typo}>
-                                Login - NextJS
+                                Login { response && response.message }
                             </Typography>
                             <form className={classes.form}>
                                 <TextField 
