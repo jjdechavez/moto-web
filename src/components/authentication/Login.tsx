@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -28,7 +28,9 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: theme.spacing(1),
         },
         typo: {
-            margin: theme.spacing(1)
+            margin: theme.spacing(1),
+            textAlign: "center",
+            marginBottom: "1em"
         }
     })
 );
@@ -42,30 +44,35 @@ export default function Login(): JSX.Element {
     const [response, setResponse] = useState<iResponse | null>(null);
 
     const handleLogin = async () => {
-        const resp = await fetch("http://localhost:5000/user/login", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: uname,
-                password: pwd
-            })
-        });
-
-        setResponse(await resp.json());
-        resp.status === 202 && history.push('/');
+        try {
+            const resp = await fetch("http://localhost:5000/user/login", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: uname,
+                    password: pwd
+                })
+            });            
+            const json = await resp.json();
+            setResponse(json.message);
+            // localStorage.setItem('login-jwt', json.jwt);
+            resp.status === 202 && history.push('/');
+        } catch (error) {
+            setResponse(error);
+        }
     }
 
     return (
         <div className={classes.root}>
             <Card className={classes.card}>
                 <CardContent style={{ height: "inherit" }}>
-                    <Grid container spacing={3} alignItems="center" className={classes.grid}>
-                        <Grid item xs={12} md={6} lg={3}>
+                    <Grid container spacing={3} alignItems="center" justify="center" className={classes.grid}>
+                        <Grid item xs={12} sm={8} md={5} lg={4}>
                             <Typography variant="h4" className={classes.typo}>
-                                Login { response && response.message }
+                                Login
                             </Typography>
                             <form className={classes.form}>
                                 <TextField 

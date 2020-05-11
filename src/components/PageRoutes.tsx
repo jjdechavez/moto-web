@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import lazyImport from "./lazyImport";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
-import Dashboard from "./dashboard";
+import Dashboard from "./pages/dashboard";
 import Cookie from "./pages/Cookie";
 import Login from "./authentication/Login";
 
@@ -20,10 +20,10 @@ const PageRoutes = (): JSX.Element => {
       <Suspense fallback={<div>Loading...</div>}>
         <Router>
           <div>
-            <ul>
+            {/* <ul>
               <li><Link to="/">Home</Link></li>
               <li><Link to="/login">Login</Link></li>
-            </ul>
+            </ul> */}
             <Switch>
               <ProtectedRoutes exact path="/" component={Dashboard} />
               <Route path="/login" component={Login}></Route>

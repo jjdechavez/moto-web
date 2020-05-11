@@ -8,39 +8,32 @@ export interface User {
     email: string;
 }
 
-export interface iData {
-    isAuth: boolean;
-    user: User;
-}
-
 const ProtectedRoute = ({ component: Component, ...rest}: any) => {
-    const [data, setData] = useState<iData>({ 
-        isAuth: false,
-        user: { 
-            id: null,
-            firstName: "",
-            lastName: "",
-            email: ""
-        }
-    });
-    const [status, setStatus] = useState<number | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [user, setUser] = useState<User | null>(null);
 
     const checkAuth = async () => {
-        const resp = await fetch("http://localhost:5000/user/auth", {
-            credentials: "include"
-        });
-        const json = await resp.json();
-        setData(json.data);
+        try {
+            const resp = await fetch("http://localhost:5000/user/auth", {
+                credentials: "include"
+            });
+            const json = await resp.json();
+            setIsAuthenticated(json.isAuth);
+            setUser(json.user);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     useEffect(()  => {
         checkAuth();
     }, []);
 
-    useEffect(() => {
-        console.log('update', data)
-    }, [data])
+    if (user === null) {
+        return (
+            <div>Loading...</div>
+        )
+    }
 
     return (
         <Route 
@@ -48,7 +41,7 @@ const ProtectedRoute = ({ component: Component, ...rest}: any) => {
             render={(props) => {
                 if (!isAuthenticated) return <Redirect to={{
                     pathname: '/login',
-                    state: {from: rest.path}
+                    state: {from: props.location}
                 }} />
                 return <Component {...props}  />
             }}       
