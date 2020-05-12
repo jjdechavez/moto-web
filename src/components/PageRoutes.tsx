@@ -10,6 +10,7 @@ import ProtectedRoutes from "./utils/ProtectedRoutes";
 import Dashboard from "./pages/dashboard";
 import Cookie from "./pages/Cookie";
 import Login from "./authentication/Login";
+import LoginContextProvider from "../contexts/LoginContext";
 
 // const Login = lazyImport("./authentication/Login");
 // const Dashboard = lazyImport("./dashboard");
@@ -26,7 +27,9 @@ const PageRoutes = (): JSX.Element => {
             </ul> */}
             <Switch>
               <ProtectedRoutes exact path="/" component={Dashboard} />
-              <Route path="/login" component={Login}></Route>
+              <LoginContextProvider>
+                <Route path="/login" component={Login}></Route>
+              </LoginContextProvider>
               <Route path="/cookie" component={Cookie}></Route>
             </Switch>
           </div>

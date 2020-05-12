@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -8,6 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { globalStyles } from "../../styles/index";
 import { useHistory } from "react-router-dom";
+import { LoginContext } from '../../contexts/LoginContext';
 
 interface iResponse {
     message: string
@@ -39,8 +40,11 @@ export default function Login(): JSX.Element {
     const classes = useStyles();
     const history = useHistory();
 
-    const [uname, setUname] = useState<string>('');
-    const [pwd, setPwd] = useState<string>('');
+    const { 
+        state: { username, password },
+        setState: { setUsername, setPassword }
+    } = useContext(LoginContext);
+
     const [response, setResponse] = useState<iResponse | null>(null);
 
     const handleLogin = async () => {
@@ -52,13 +56,12 @@ export default function Login(): JSX.Element {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    email: uname,
-                    password: pwd
+                    email: username,
+                    password
                 })
             });            
             const json = await resp.json();
             setResponse(json.message);
-            // localStorage.setItem('login-jwt', json.jwt);
             resp.status === 202 && history.push('/');
         } catch (error) {
             setResponse(error);
@@ -80,8 +83,8 @@ export default function Login(): JSX.Element {
                                     variant="outlined"
                                     fullWidth
                                     className={globalClass.mbOneEm}
-                                    value={uname}
-                                    onChange={e => setUname(e.target.value)}
+                                    value={username}
+                                    onChange={e => setUsername(e.target.value)}
                                 />
                                 <TextField 
                                     label="Password"
@@ -89,8 +92,8 @@ export default function Login(): JSX.Element {
                                     type="password"
                                     fullWidth
                                     className={globalClass.mbOneEm}
-                                    value={pwd}
-                                    onChange={e => setPwd(e.target.value)}
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
                                 />
                                 <Button 
                                     variant="contained" 

@@ -1,9 +1,12 @@
 import React from 'react';
+import Header from './Header';
+import Items from './Items';
 
 const Dashboard = () => {
     return (
         <>
-            <h1>Dashboard</h1>
+            <Header />
+            <Items />
         </>
     )
 }
