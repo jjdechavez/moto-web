@@ -1,13 +1,8 @@
 import React, { createContext, useReducer, useState } from "react";
 import { LoginState, LoginReducer } from "../reducers/LoginReducer";
+import { iLoginContextProps } from "../interface/context/LoginContext";
 
-export interface iContextProps {
-    state: any;
-    setState: any;
-    // dispatch({type}:{type:string}): void;
-}
-
-export const LoginContext = createContext({} as iContextProps);
+export const LoginContext = createContext({} as iLoginContextProps);
 
 function LoginContextProvider(props: any) {
     const [username, setUsername] = useState<string>('');
