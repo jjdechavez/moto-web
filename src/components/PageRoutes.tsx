@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -11,7 +11,6 @@ import Dashboard from "./pages/dashboard";
 import Cookie from "./pages/Cookie";
 import Login from "./authentication/Login";
 import LoginContextProvider from "../contexts/LoginContext";
-import ItemContextProvider from "../contexts/dashboard/ItemContext";
 
 // const Login = lazyImport("./authentication/Login");
 // const Dashboard = lazyImport("./dashboard");
@@ -19,7 +18,7 @@ import ItemContextProvider from "../contexts/dashboard/ItemContext";
 
 const PageRoutes = (): JSX.Element => {
     return (
-      <Suspense fallback={<div>Loading...</div>}>
+      // <Suspense fallback={<div>Loading...</div>}>
         <Router>
           <div>
             {/* <ul>
@@ -27,9 +26,7 @@ const PageRoutes = (): JSX.Element => {
               <li><Link to="/login">Login</Link></li>
             </ul> */}
             <Switch>
-              {/* <ItemContextProvider> */}
-                <ProtectedRoutes exact path="/" component={Dashboard} />
-              {/* </ItemContextProvider> */}
+              <ProtectedRoutes exact path="/" component={Dashboard} />
               <LoginContextProvider>
                 <Route path="/login" component={Login}></Route>
               </LoginContextProvider>
@@ -37,7 +34,7 @@ const PageRoutes = (): JSX.Element => {
             </Switch>
           </div>
         </Router>
-      </Suspense>
+      // </Suspense>
     );
 }
 

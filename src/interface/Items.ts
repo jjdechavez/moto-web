@@ -7,5 +7,8 @@ export interface iItems {
     quantity: number;
     dateAdded: string;
     status: number;
-    userId: number | null;
+    user: {
+        id: number;
+        firstName: string;
+    }
 }

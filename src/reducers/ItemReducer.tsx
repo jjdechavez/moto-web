@@ -11,7 +11,10 @@ export interface iItemState {
     getItemsStatus: ItemStatus;
 }
 
-export const ItemReducer = (state: iItemState, {type, payload}: {type: string, payload?: any | null}): iItemState => {
+export const ItemReducer = (
+    state: iItemState,
+    { type, payload } : { type: string, payload?: any | null } 
+): iItemState => {
     switch(type) {
         case 'GET_ITEMS': {
             let status = {
@@ -26,7 +29,7 @@ export const ItemReducer = (state: iItemState, {type, payload}: {type: string, p
                 sending: false,
                 sent: true
             }
-            return { ...state, items: payload }
+            return { ...state, getItemsStatus: status, items: payload }
         }
         case 'GET_ITEMS_FAILED': {
             let status = {

@@ -7,8 +7,11 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { iItems } from '../../../interface/Items';
-import ItemContextProvider, { ItemContext } from "../../../contexts/dashboard/ItemContext";
+import { ItemContext } from "../../../contexts/dashboard/ItemContext";
+import { getItems, resetItemStatus } from "../../../actions/ItemActions";
+import { iItems } from "../../../interface/Items";
+import Skeleton from '@material-ui/lab/Skeleton';
+import { Box } from "@material-ui/core";
 
 const useStyles = makeStyles({
   table: {
@@ -16,56 +19,57 @@ const useStyles = makeStyles({
   },
 });
 
+let render = 1;
+
 const Items = () => {
     const classes = useStyles();
     const { itemState, dispatch } = useContext(ItemContext);
+    
+    const { items, getItemsStatus: { sending, sent, error } } = itemState;
 
-    // const [loading, setLoading] = useState(false);
-    // const [items, setItems] = useState<iItems[]>([]);
-
-    const fetchItems = async () => {
-        // setItems(json.map((data: iItems) => data))
-        dispatch({ type: 'GET_ITEMS' });
-        try {
-            const resp = await fetch("http://localhost:5000/item/all", {
-                credentials: "include"
-            });
-            const json = await resp.json();
-            console.log(json)
-        } catch (error) {
-            dispatch({ type: 'GET_ITEMS_FAILED', payload: error })
-        }
-    }
+    console.log('render', render++)
 
     useEffect(() => {
-        // fetchItems();
+        getItems(dispatch);
     }, []);
 
-    // useEffect(() => {
-    //     setLoading(false);
-    //     console.log(items);
-    // }, [items])
+    useEffect(() => {
+        sent || error && resetItemStatus(dispatch);
+    }, [sent, error]);
 
-    // const renderItems = () => {
-    //     if (loading) {
-    //         return <div>Loading</div>
-    //     } else {
-    //         items.map(item => (
-    //             <TableRow key={item.id}>
-    //                 <TableCell component="th" scope="row">{item.id}</TableCell>
-    //                 <TableCell align="right">{item.name}</TableCell>
-    //                 <TableCell align="right">{item.serialNumber}</TableCell>
-    //                 <TableCell align="right">{item.brand}</TableCell>
-    //                 <TableCell align="right">{item.category}</TableCell>
-    //                 <TableCell align="right">{item.status}</TableCell>
-    //                 <TableCell align="right">{item.dateAdded}</TableCell>
-    //             </TableRow>
-    //         ))
-    //     }
-    // }
+    let container: any = [];
+    const loadingItems = () => {
+        for (let i = 0; i < 5; i++) {
+            container.push(
+                <Box key={i}>
+                    <Skeleton variant="text" width="100%" />
+                    <Skeleton variant="text" width="100%" />
+                </Box>
+            )
+        }
+    return <>{container}</>
+    }
 
-    return (
-        <ItemContextProvider>
+    const renderItems = () => {
+        return items.map((item: iItems) => (
+            <TableRow key={item.id}>
+                <TableCell component="th" scope="row">{item.id}</TableCell>
+                <TableCell align="right">{item.name}</TableCell>
+                <TableCell align="right">{item.serialNumber}</TableCell>
+                <TableCell align="right">{item.brand}</TableCell>
+                <TableCell align="right">{item.category}</TableCell>
+                <TableCell align="right">{item.quantity}</TableCell>
+                <TableCell align="right">{item.status}</TableCell>
+                <TableCell align="right">{item.dateAdded}</TableCell>
+                <TableCell align="right">{item.user.firstName}</TableCell>
+            </TableRow>
+        ))
+    }
+
+    if (sending) {
+        return loadingItems()
+    } else {
+        return (
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
@@ -82,12 +86,12 @@ const Items = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {/* {renderItems} */}
+                        {renderItems()}
                     </TableBody>
                 </Table>
             </TableContainer>
-        </ItemContextProvider>
-    );
+        );
+    }
 }
 
 export default Items
