@@ -11,7 +11,19 @@ import { ItemContext } from "../../../contexts/dashboard/ItemContext";
 import { getItems, resetItemStatus } from "../../../actions/ItemActions";
 import { iItems } from "../../../interface/Items";
 import Skeleton from '@material-ui/lab/Skeleton';
-import { Box } from "@material-ui/core";
+import { Box, IconButton } from "@material-ui/core";
+import { LinearProgress, withStyles } from "@material-ui/core";
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+const ColorLinearProgress = withStyles({
+  colorPrimary: {
+    backgroundColor: '#90caf9',
+  },
+  barColorPrimary: {
+    backgroundColor: '#1976d2',
+  },
+})(LinearProgress);
 
 const useStyles = makeStyles({
   table: {
@@ -39,15 +51,14 @@ const Items = () => {
 
     let container: any = [];
     const loadingItems = () => {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
             container.push(
                 <Box key={i}>
-                    <Skeleton variant="text" width="100%" />
-                    <Skeleton variant="text" width="100%" />
+                    <Skeleton variant="text" height={50} width="100%" />
                 </Box>
             )
         }
-    return <>{container}</>
+        return <>{container}</>
     }
 
     const renderItems = () => {
@@ -62,34 +73,45 @@ const Items = () => {
                 <TableCell align="right">{item.status}</TableCell>
                 <TableCell align="right">{item.dateAdded}</TableCell>
                 <TableCell align="right">{item.user.firstName}</TableCell>
+                <TableCell align="right">
+                    <IconButton>
+                        <EditIcon/>
+                    </IconButton>
+                    <IconButton>
+                        <DeleteIcon />
+                    </IconButton>
+                </TableCell>
             </TableRow>
         ))
     }
 
     if (sending) {
-        return loadingItems()
+        return <ColorLinearProgress />
     } else {
         return (
-            <TableContainer component={Paper}>
-                <Table className={classes.table} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Product ID</TableCell>
-                            <TableCell align="right">Name</TableCell>
-                            <TableCell align="right">SerialNumber</TableCell>
-                            <TableCell align="right">Brand</TableCell>
-                            <TableCell align="right">Category</TableCell>
-                            <TableCell align="right">Quantity</TableCell>
-                            <TableCell align="right">Status</TableCell>
-                            <TableCell align="right">Date Added</TableCell>
-                            <TableCell align="right">Created By</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {renderItems()}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <>
+                <TableContainer component={Paper}>
+                    <Table className={classes.table} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Product ID</TableCell>
+                                <TableCell align="right">Name</TableCell>
+                                <TableCell align="right">SerialNumber</TableCell>
+                                <TableCell align="right">Brand</TableCell>
+                                <TableCell align="right">Category</TableCell>
+                                <TableCell align="right">Quantity</TableCell>
+                                <TableCell align="right">Status</TableCell>
+                                <TableCell align="right">Date Added</TableCell>
+                                <TableCell align="right">Created By</TableCell>
+                                <TableCell align="right">Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {renderItems()}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </>
         );
     }
 }

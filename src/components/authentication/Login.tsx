@@ -8,7 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { globalStyles } from "../../styles/index";
 import { useHistory } from "react-router-dom";
-import { LoginContext } from '../../contexts/LoginContext';
+import { AuthContext } from '../../contexts/AuthContext';
 
 interface iResponse {
     message: string
@@ -43,7 +43,7 @@ export default function Login(): JSX.Element {
     const { 
         state: { username, password },
         setState: { setUsername, setPassword }
-    } = useContext(LoginContext);
+    } = useContext(AuthContext);
 
     const [response, setResponse] = useState<iResponse | null>(null);
 

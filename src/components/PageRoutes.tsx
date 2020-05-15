@@ -6,11 +6,12 @@ import {
   Link,
 } from "react-router-dom";
 import lazyImport from "./lazyImport";
-import ProtectedRoutes from "./utils/ProtectedRoutes";
 import Dashboard from "./pages/dashboard";
 import Cookie from "./pages/Cookie";
 import Login from "./authentication/Login";
-import LoginContextProvider from "../contexts/LoginContext";
+import LoginContextProvider from "../contexts/AuthContext";
+import ProtectedProviderRoute from "./utils/ProtectedProviderRoute";
+import ItemContextProvider from "../contexts/dashboard/ItemContext";
 
 // const Login = lazyImport("./authentication/Login");
 // const Dashboard = lazyImport("./dashboard");
@@ -26,7 +27,7 @@ const PageRoutes = (): JSX.Element => {
               <li><Link to="/login">Login</Link></li>
             </ul> */}
             <Switch>
-              <ProtectedRoutes exact path="/" component={Dashboard} />
+              <ProtectedProviderRoute exact path="/" provider={ItemContextProvider} component={Dashboard} />
               <LoginContextProvider>
                 <Route path="/login" component={Login}></Route>
               </LoginContextProvider>
