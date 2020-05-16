@@ -1,5 +1,5 @@
 import React, { createContext, useReducer, useState } from "react";
-import { IAuthState, AuthReducer } from "../reducers/AuthReducer";
+import { AuthReducer } from "../reducers/AuthReducer";
 import { IAuthContextProps } from "../interface/context/AuthContext";
 import logger from 'use-reducer-logger';
 

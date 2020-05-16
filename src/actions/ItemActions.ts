@@ -17,7 +17,7 @@ export const getItems = async (dispatch: any) => {
     try {
         const json = await fetchData('item/all');
         dispatch({ type: 'GET_ITEMS_FULFILLED', payload: json.map((data: iItems) => data) });
-        dispatch({ type: 'GET_ITEMS_RESET' });
+        // dispatch({ type: 'GET_ITEMS_RESET' });
     } catch (error) {
         dispatch({ type: 'GET_ITEMS_FAILED', payload: error })
     }

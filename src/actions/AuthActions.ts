@@ -1,5 +1,3 @@
-import {  } from "react-router-dom";
-
 export const LoginUser = async (dispatch: any, username: string, password: string) => {
     try {
         dispatch({ type: 'LOGIN' });
@@ -15,10 +13,22 @@ export const LoginUser = async (dispatch: any, username: string, password: strin
             })
         });            
         const json = await res.json();
-        dispatch({ type: 'LOGIN_FULFILLED', payload: { user: json.user, token: json.token } })
-        dispatch({ type: 'LOGIN_RESET' })
-        // res.status === 202 && history.push('/');
+        localStorage.setItem('token', json.token);
+        dispatch({ type: 'LOGIN_FULFILLED', payload: { user: json.user, token: json.token } });
     } catch (error) {
         dispatch({ type: 'LOGIN_FAILED', payload: error })
     }
+}
+
+export const ResetLoginStatus = (dispatch: any) => {
+    dispatch({ type: 'LOGIN_RESET' })
+}
+
+export const LogoutUser = async (dispatch: any) => {
+    localStorage.removeItem('token');
+    dispatch({ type: 'LOGOUT' });
+}
+
+export const GetToken = () => {
+    return localStorage.getItem('token');
 }

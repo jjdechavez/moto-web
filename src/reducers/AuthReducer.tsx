@@ -55,6 +55,27 @@ export const AuthReducer = (
             }
             return { ...state, loginStatus: status }
         }
+        case 'LOGOUT': {
+            let status = {
+                ...state.loginStatus,
+                sending: false,
+                sent: false,
+                error: null
+            }
+
+            return {
+                ...state,
+                isAuthenticated: false,
+                loginStatus: status,
+                user: {
+                    id: null,
+                    firstName: '',
+                    lastName: '',
+                    email: ''
+                },
+                token: null
+            }
+        }
         default:
             return state;
     }

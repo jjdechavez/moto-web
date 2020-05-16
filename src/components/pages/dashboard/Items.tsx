@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,8 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import { ItemContext } from "../../../contexts/dashboard/ItemContext";
 import { getItems, resetItemStatus } from "../../../actions/ItemActions";
 import { iItems } from "../../../interface/Items";
-import Skeleton from '@material-ui/lab/Skeleton';
-import { Box, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import { LinearProgress, withStyles } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -46,20 +45,13 @@ const Items = () => {
     }, []);
 
     useEffect(() => {
-        sent || error && resetItemStatus(dispatch);
-    }, [sent, error]);
-
-    let container: any = [];
-    const loadingItems = () => {
-        for (let i = 0; i < 3; i++) {
-            container.push(
-                <Box key={i}>
-                    <Skeleton variant="text" height={50} width="100%" />
-                </Box>
-            )
+        if (sent) {
+            resetItemStatus(dispatch);
         }
-        return <>{container}</>
-    }
+        if (error) {
+            resetItemStatus(dispatch);
+        }
+    }, [sent, error]);
 
     const renderItems = () => {
         return items.map((item: iItems) => (

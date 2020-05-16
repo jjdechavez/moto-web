@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -9,11 +9,8 @@ import Button from '@material-ui/core/Button';
 import { globalStyles } from "../../styles/index";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from '../../contexts/AuthContext';
-import { LoginUser } from "../../actions/AuthActions";
-
-interface iResponse {
-    message: string
-}
+import { LoginUser, ResetLoginStatus } from "../../actions/AuthActions";
+import CircularLoading from '../utils/Loading';
 
 const useStyles = makeStyles((theme: Theme) => 
     createStyles({
@@ -44,13 +41,30 @@ export default function Login(): JSX.Element {
     const { 
         state: { username, password },
         setState: { setUsername, setPassword },
+        authState,
         dispatch
     } = useContext(AuthContext);
 
-    const [response, setResponse] = useState<iResponse | null>(null);
+    const { isAuthenticated, loginStatus: { sending, error, sent } } = authState;
 
-    const handleLogin = async () => {
-       LoginUser(dispatch, username, password) ;
+    const handleLogin = () => {
+        LoginUser(dispatch, username, password);
+        setUsername('');
+        setPassword('');
+    }
+    
+    useEffect(() => {
+        isAuthenticated && history.push('/');
+    }, [isAuthenticated]);
+
+    useEffect(() => {
+        if (sent || error) {
+            ResetLoginStatus(dispatch);
+        }
+    }, [sent, error])
+    
+    if (sending) {
+        return <CircularLoading />
     }
 
     return (

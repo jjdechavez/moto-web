@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import clsx from 'clsx';
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 import { Link } from "react-router-dom";
@@ -20,6 +20,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import InfoIcon from '@material-ui/icons/Info';
 import DesktopWindowsIcon from '@material-ui/icons/DesktopWindows';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { LogoutUser } from "../../../actions/AuthActions";
+import { AuthContext } from "../../../contexts/AuthContext";
 
 const drawerWidth = 240;
 
@@ -78,6 +80,10 @@ const useStyles = makeStyles((theme: Theme) =>
       }),
       marginLeft: 0,
     },
+    link: {
+      textDecoration: 'none',
+      color: 'rgba(0, 0, 0, 0.87)'
+    }
   }),
 );
 
@@ -85,10 +91,18 @@ const Header = () => {
   const classes = useStyles();
   const theme = useTheme();
 
+  const { dispatch } = useContext(AuthContext);
+
   const [open, setOpen] = useState(false);
+  const [toggleDrawer, setToggleDrawer] = useState(false);
+
   const [mainLink] = useState([
     { name: 'Inventory', icon: <DesktopWindowsIcon />, to: '/' },
     { name: 'Checkout', icon: <ShoppingCartIcon />, to: '/checkout' }
+  ]);
+  const [optionLink] = useState([
+    { name: 'About', icon: <InfoIcon />, to: '/about' },
+    { name: 'Logout', icon: <ExitToAppIcon />, to: '/login' }
   ]);
 
   const handleDrawerOpen = () => {
@@ -140,8 +154,13 @@ const Header = () => {
         <Divider />
         <List>
           {mainLink.map((link, index) => (
-            <Link to={link.to}>
-              <ListItem button key={index}>
+            <Link 
+              key={index} 
+              to={link.to} 
+              className={classes.link}
+              onClick={handleDrawerClose}
+            >
+              <ListItem button>
                 <ListItemIcon>{link.icon}</ListItemIcon>
                 <ListItemText primary={link.name} />
               </ListItem>
@@ -150,15 +169,22 @@ const Header = () => {
         </List>
         <Divider />
         <List>
-          {['About', 'Logout'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InfoIcon /> : <ExitToAppIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
+          {optionLink.map((link, index) => (
+            <Link 
+              key={index} 
+              to={link.to} 
+              className={classes.link} 
+              onClick={() => index === 1 && LogoutUser(dispatch)}
+            >
+              <ListItem button>
+                <ListItemIcon>{link.icon}</ListItemIcon>
+                <ListItemText primary={link.name} />
+              </ListItem>
+            </Link>
           ))}
         </List>
       </Drawer>
-      
+
     </div>
   )
 }
