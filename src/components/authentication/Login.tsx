@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button';
 import { globalStyles } from "../../styles/index";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from '../../contexts/AuthContext';
+import { LoginUser } from "../../actions/AuthActions";
 
 interface iResponse {
     message: string
@@ -42,30 +43,14 @@ export default function Login(): JSX.Element {
 
     const { 
         state: { username, password },
-        setState: { setUsername, setPassword }
+        setState: { setUsername, setPassword },
+        dispatch
     } = useContext(AuthContext);
 
     const [response, setResponse] = useState<iResponse | null>(null);
 
     const handleLogin = async () => {
-        try {
-            const resp = await fetch("http://localhost:5000/user/login", {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: username,
-                    password
-                })
-            });            
-            const json = await resp.json();
-            setResponse(json.message);
-            resp.status === 202 && history.push('/');
-        } catch (error) {
-            setResponse(error);
-        }
+       LoginUser(dispatch, username, password) ;
     }
 
     return (

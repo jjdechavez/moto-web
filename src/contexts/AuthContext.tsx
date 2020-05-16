@@ -1,9 +1,9 @@
 import React, { createContext, useReducer, useState } from "react";
 import { IAuthState, AuthReducer } from "../reducers/AuthReducer";
-import { iLoginContextProps } from "../interface/context/LoginContext";
+import { IAuthContextProps } from "../interface/context/AuthContext";
 import logger from 'use-reducer-logger';
 
-export const AuthContext = createContext({} as iLoginContextProps);
+export const AuthContext = createContext({} as IAuthContextProps);
 
 function AuthContextProvider(props: any) {
 
@@ -13,10 +13,21 @@ function AuthContextProvider(props: any) {
             sending: false,
             sent: false,
             error: null
-        }
+        },
+        user: {
+            id: null,
+            firstName: '',
+            lastName: '',
+            email: ''
+        },
+        token: null
     }
 
-    const [authState, dispatch] = useReducer(AuthReducer, initialState);
+    const [authState, dispatch] = useReducer(
+        process.env.NODE_ENV === 'development' 
+            ? logger(AuthReducer)
+            : AuthReducer, initialState
+    );
 
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -29,7 +40,9 @@ function AuthContextProvider(props: any) {
         setState: {
             setUsername,
             setPassword
-        }
+        },
+        authState,
+        dispatch
     }
     
     return (
