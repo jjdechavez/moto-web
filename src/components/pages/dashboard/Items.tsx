@@ -51,7 +51,7 @@ const Items = () => {
         if (error) {
             resetItemStatus(dispatch);
         }
-    }, [sent, error]);
+    }, [sent, error, dispatch]);
 
     const renderItems = () => {
         return items.map((item: iItems) => (

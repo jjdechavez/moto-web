@@ -1,4 +1,5 @@
 import { iItems } from "../interface/Items";
+import { getAccessToken } from "../components/utils/accessToken";
 
 export type iDispatch = {
     type: string;
@@ -6,8 +7,12 @@ export type iDispatch = {
 }
 
 const fetchData = async (api: string) => {
-    const res = await fetch(`http://localhost:5000/${api}`, {
-        credentials: 'include'
+    const accessToken = getAccessToken();
+    const res = await fetch(`http://localhost:5001/${api}`, {
+        credentials: "include",
+        headers: {
+            'authorization': accessToken ? `Bearer ${accessToken}`: ''
+        }
     });
     return res.json();
 }

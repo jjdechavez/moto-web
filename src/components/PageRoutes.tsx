@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -13,21 +13,20 @@ import ProtectedRoute from "./utils/ProtectedRoutes";
 import ItemContextProvider from "../contexts/dashboard/ItemContext";
 import Checkout from "./pages/dashboard/Checkout";
 import Header from "./pages/dashboard/Header";
-import { AuthContext } from "../contexts/AuthContext";
+import { getAccessToken } from "./utils/accessToken";
 
 // const Login = lazyImport("./authentication/Login");
 // const Dashboard = lazyImport("./dashboard");
 // const ProtectedRoute = lazyImport("./utils/ProtectedRoutes");
 
 const PageRoutes = (): JSX.Element => {
-  const { authState } = useContext(AuthContext);
-  const token = localStorage.getItem('token');
+  const token = getAccessToken();
 
   return (
     // <Suspense fallback={<div>Loading...</div>}>
       <Router>
         <div>
-          {token || authState.isAuthenticated ? <Header /> : ''}
+          {token && <Header />}
           <Switch>
             <ProtectedProviderRoute exact path="/" provider={ItemContextProvider} component={Dashboard} />
             <Route path="/login" component={Login}></Route>

@@ -47,21 +47,22 @@ export default function Login(): JSX.Element {
 
     const { isAuthenticated, loginStatus: { sending, error, sent } } = authState;
 
-    const handleLogin = () => {
+    const handleLogin = (e: any) => {
+        e.preventDefault();
         LoginUser(dispatch, username, password);
         setUsername('');
         setPassword('');
     }
     
     useEffect(() => {
-        isAuthenticated && history.push('/');
+        isAuthenticated && history.push('/')
     }, [isAuthenticated]);
 
     useEffect(() => {
         if (sent || error) {
             ResetLoginStatus(dispatch);
         }
-    }, [sent, error])
+    }, [sent, error, dispatch])
     
     if (sending) {
         return <CircularLoading />
@@ -98,7 +99,7 @@ export default function Login(): JSX.Element {
                                     variant="contained" 
                                     color="primary"
                                     fullWidth
-                                    onClick={handleLogin}
+                                    onClick={e => handleLogin(e)}
                                 >
                                     Login
                                 </Button>
