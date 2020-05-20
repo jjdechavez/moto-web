@@ -5,25 +5,11 @@ interface bodyProps {
     value: string
 }
 
-// export const fetchPostSetHeader = async (api: string, body: [bodyProps]) => {
-//     const res = await fetch(`http://localhost:5000/${api}`, {
-//         method: "POST",
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(
-//             body.map(data => {
-                // return `${data.name}: ${data.value}`
-//             })
-//         )
-//     })
-// }
-
 export const LoginUser = async (dispatch: any, username: string, password: string) => {
     try {
         dispatch({ type: 'LOGIN' });
         const accessToken = getAccessToken();
-        const res = await fetch("http://localhost:5001/user/login", {
+        const res = await fetch("http://localhost:5000/user/login", {
             method: "POST",
             credentials: "include",
             headers: {
@@ -49,4 +35,13 @@ export const ResetLoginStatus = (dispatch: any) => {
 
 export const LogoutUser = async (dispatch: any) => {
     dispatch({ type: 'LOGOUT' });
+}
+
+export const fetchRefreshToken = async () => {
+    const res = await fetch('http://localhost:5000/user/refresh_token', {
+      method: 'POST',
+      credentials: "include"
+    });
+    const json = await res.json();
+    setAccessToken(json.accessToken);
 }

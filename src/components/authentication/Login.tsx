@@ -56,7 +56,7 @@ export default function Login(): JSX.Element {
     
     useEffect(() => {
         isAuthenticated && history.push('/')
-    }, [isAuthenticated]);
+    }, [isAuthenticated, history]);
 
     useEffect(() => {
         if (sent || error) {

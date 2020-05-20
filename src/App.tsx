@@ -7,7 +7,7 @@ import CircularLoading from './components/utils/Loading';
 function App() {
   const [loading, setLoading] = useState(true);
   const getRefreshToken = async () => {
-    const res = await fetch('http://localhost:5001/user/refresh_token', {
+    const res = await fetch('http://localhost:5000/user/refresh_token', {
       method: 'POST',
       credentials: "include"
     });
@@ -32,5 +32,9 @@ function App() {
     </div>
   );
 }
+
+// install jwt-decode. 
+// getAccessToken. !token return true
+// check the token if expired by Date.now() >= exp_token * 1000 return false : true - inside on trycatch catch return false
 
 export default App;

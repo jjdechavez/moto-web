@@ -42,7 +42,7 @@ const Items = () => {
 
     useEffect(() => {
         getItems(dispatch);
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
         if (sent) {

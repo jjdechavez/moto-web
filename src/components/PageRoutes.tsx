@@ -29,9 +29,9 @@ const PageRoutes = (): JSX.Element => {
           {token && <Header />}
           <Switch>
             <ProtectedProviderRoute exact path="/" provider={ItemContextProvider} component={Dashboard} />
-            <Route path="/login" component={Login}></Route>
+            <Route path="/login" component={Login} />
             <ProtectedRoute path="/checkout" component={Checkout} />
-            <Route path="/cookie" component={Cookie}></Route>
+            <Route path="/cookie" component={Cookie} />
           </Switch>
         </div>
       </Router>

@@ -94,7 +94,6 @@ const Header = () => {
   const { dispatch } = useContext(AuthContext);
 
   const [open, setOpen] = useState(false);
-  const [toggleDrawer, setToggleDrawer] = useState(false);
 
   const [mainLink] = useState([
     { name: 'Inventory', icon: <DesktopWindowsIcon />, to: '/' },

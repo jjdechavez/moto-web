@@ -8,10 +8,10 @@ export type iDispatch = {
 
 const fetchData = async (api: string) => {
     const accessToken = getAccessToken();
-    const res = await fetch(`http://localhost:5001/${api}`, {
+    const res = await fetch(`http://localhost:5000/${api}`, {
         credentials: "include",
         headers: {
-            'authorization': accessToken ? `Bearer ${accessToken}`: ''
+            'Authorization': accessToken ? `Bearer ${accessToken}`: ''
         }
     });
     return res.json();
