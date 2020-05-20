@@ -14,6 +14,11 @@ function AuthContextProvider(props: any) {
             sent: false,
             error: null
         },
+        getUserStatus: {
+            sending: false,
+            sent: false,
+            error: null
+        },
         user: {
             id: null,
             firstName: '',

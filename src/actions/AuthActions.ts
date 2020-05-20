@@ -1,15 +1,19 @@
 import { setAccessToken, getAccessToken } from "../components/utils/accessToken";
+import { fetchData } from "./ItemActions";
 
 interface bodyProps {
     name: string,
     value: string
 }
 
+export const port = 5000;
+export const changePort = 5001;
+
 export const LoginUser = async (dispatch: any, username: string, password: string) => {
     try {
         dispatch({ type: 'LOGIN' });
         const accessToken = getAccessToken();
-        const res = await fetch("http://localhost:5000/user/login", {
+        const res = await fetch(`http://localhost:${changePort}/user/login`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -37,11 +41,16 @@ export const LogoutUser = async (dispatch: any) => {
     dispatch({ type: 'LOGOUT' });
 }
 
-export const fetchRefreshToken = async () => {
-    const res = await fetch('http://localhost:5000/user/refresh_token', {
-      method: 'POST',
-      credentials: "include"
-    });
-    const json = await res.json();
-    setAccessToken(json.accessToken);
+export const getUser = async (dispatch: any) => {
+    try {
+        dispatch({ type: 'GET_USER' });
+        const json = await fetchData('user/about');
+        dispatch({ type: 'GET_USER_FULFILLED', payload: json.user });
+    } catch (error) {
+        dispatch({ type: 'GET_USER_ERROR', payload: error });
+    }
+}
+
+export const resetGetUser = (dispatch: any) => {
+    dispatch({ type: 'GET_USER_RESET' });
 }

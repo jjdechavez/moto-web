@@ -1,14 +1,15 @@
 import { iItems } from "../interface/Items";
 import { getAccessToken } from "../components/utils/accessToken";
+import { changePort } from "./AuthActions";
 
 export type iDispatch = {
     type: string;
     payload?: iItems | string;
 }
 
-const fetchData = async (api: string) => {
+export const fetchData = async (api: string) => {
     const accessToken = getAccessToken();
-    const res = await fetch(`http://localhost:5000/${api}`, {
+    const res = await fetch(`http://localhost:${changePort}/${api}`, {
         credentials: "include",
         headers: {
             'Authorization': accessToken ? `Bearer ${accessToken}`: ''
