@@ -8,6 +8,7 @@ export type loginStatus = {
 export interface IAuthState {
     isAuthenticated: boolean | null;
     loginStatus: loginStatus;
+    getUserStatus: loginStatus;
     user: User;
     token: string | null;
 }
@@ -75,6 +76,38 @@ export const AuthReducer = (
                 },
                 token: null
             }
+        }
+        case 'GET_USER': {
+            let status = {
+                ...state.getUserStatus,
+                sending: true
+            }
+            return { ...state, getUserStatus: status }
+        }
+        case 'GET_USER_FULFILLED': {
+            let status = {
+                ...state.getUserStatus,
+                sending: false,
+                sent: true
+            }
+            return { ...state, getUserStatus: status, user: payload }
+        }
+        case 'GET_USER_FAILED': {
+            let status = {
+                ...state.getUserStatus,
+                sent: false,
+                error: payload
+            }
+            return { ...state, getUserStatus: status }
+        }
+        case 'GET_USER_RESET': {
+            let status = {
+                ...state.getUserStatus,
+                sending: false,
+                sent: false,
+                error: null
+            }
+            return { ...state, getUserStatus: status }
         }
         default:
             return state;
