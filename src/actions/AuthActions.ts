@@ -27,7 +27,7 @@ export const LoginUser = async (dispatch: any, username: string, password: strin
         });            
         const json = await res.json();
         setAccessToken(json.token);
-        dispatch({ type: 'LOGIN_FULFILLED', payload: { user: json.user, token: json.token } });
+        dispatch({ type: 'LOGIN_FULFILLED', payload: { user: json.user, token: json.token, isAuth: json.isAuth } });
     } catch (error) {
         dispatch({ type: 'LOGIN_FAILED', payload: error });
     }
@@ -38,6 +38,8 @@ export const ResetLoginStatus = (dispatch: any) => {
 }
 
 export const LogoutUser = async (dispatch: any) => {
+    await fetchData('user/logout');
+    setAccessToken("");
     dispatch({ type: 'LOGOUT' });
 }
 
@@ -51,6 +53,6 @@ export const getUser = async (dispatch: any) => {
     }
 }
 
-export const resetGetUser = (dispatch: any) => {
+export const resetGetUser = async (dispatch: any) => {
     dispatch({ type: 'GET_USER_RESET' });
 }

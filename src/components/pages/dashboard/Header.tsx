@@ -173,7 +173,7 @@ const Header = () => {
               key={index} 
               to={link.to} 
               className={classes.link} 
-              onClick={() => index === 1 && LogoutUser(dispatch)}
+              onClick={() => index === 1 ? LogoutUser(dispatch) : handleDrawerClose()}
             >
               <ListItem button>
                 <ListItemIcon>{link.icon}</ListItemIcon>

@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
-import { Typography, Box } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import CircularLoading from "../../utils/Loading";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { getUser, resetGetUser } from "../../../actions/AuthActions";
@@ -25,10 +25,10 @@ export const About = () => {
         <div>
             <CssBaseline />
             <Container maxWidth="lg">
-                <Box component="text">
+                <div>
                     <Typography>{user.firstName + ' ' + user.lastName}</Typography>
                     <Typography>{user.email}</Typography>
-                </Box>
+                </div>
             </Container>
         </div>
     )
