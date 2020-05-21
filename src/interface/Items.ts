@@ -6,6 +6,7 @@ export interface iItems {
     serialNumber: string;
     quantity: number;
     dateAdded: string;
+    price: number;
     status: number;
     user: {
         id: number;
