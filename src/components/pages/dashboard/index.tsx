@@ -1,10 +1,10 @@
 import React from 'react';
-import Items from './Items';
+import ItemsComp from './Items';
 
 const Dashboard = () => {
     return (
         <>
-            <Items />
+            <ItemsComp />
         </>
     )
 }

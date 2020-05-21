@@ -7,9 +7,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { ItemContext } from "../../../contexts/dashboard/ItemContext";
+import { ItemContext, Items } from "../../../contexts/dashboard/ItemContext";
 import { getItems, resetItemStatus } from "../../../actions/ItemActions";
-import { iItems } from "../../../interface/Items";
 import { IconButton, useTheme, TableFooter, TablePagination } from "@material-ui/core";
 import { LinearProgress, withStyles } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
@@ -39,16 +38,6 @@ const useStyles = makeStyles((theme: Theme) =>
         }
     }),
 );
-
-// const useStyles = makeStyles({
-//     root: {
-//         flexShrink: 0,
-//         marginLeft: theme.spacing(2.5)
-//     },
-//     table: {
-//         minWidth: 650,
-//     },
-// });
 
 let render = 1;
 
@@ -110,13 +99,14 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
-const Items = () => {
+const ItemsComp = () => {
     const classes = useStyles();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const { itemState, dispatch } = useContext(ItemContext);
+    const { setState, itemState, dispatch } = useContext(ItemContext);
     
     const { items, getItemsStatus: { sending, sent, error } } = itemState;
+    const { setEdit } = setState;
 
     console.log('render', render++)
 
@@ -147,41 +137,50 @@ const Items = () => {
         setPage(0);
     };
 
+    const priceFormat = (x: number) => {
+       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    const handleEditItem = (item: any) => {
+        dispatch({ type: 'GET_CURRENT_ITEM', payload: item });
+        setEdit(true);
+    }
+
     const renderItems = () => {
         return (rowsPerPage > 0
             ? items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : items
-        ).map((item: iItems) => (
-            <TableRow key={item.id}>
+        ).map((item: Items) => (
+            <TableRow key={item.name}>
                 <TableCell component="th" scope="row">
                     {item.id}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="right">
+                <TableCell style={{ width: 160 }} align="center">
                     {item.name}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="right">
+                <TableCell style={{ width: 160 }} align="center">
                     {item.serialNumber}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="right">
+                <TableCell style={{ width: 160 }} align="center">
                     {item.brand}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="right">
+                <TableCell style={{ width: 160 }} align="center">
                     {item.category}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="right">
+                <TableCell style={{ width: 160 }} align="center">
                     {item.quantity}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="right">
-                    &#8369; {item.price.toLocaleString()}
+                <TableCell style={{ width: 160 }} align="center">
+                    &#8369; {priceFormat(item.price)}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="right">
+                <TableCell style={{ width: 160 }} align="center">
                     {item.dateAdded}
                 </TableCell>
-                <TableCell style={{ width: 160 }} align="right">
+                <TableCell style={{ width: 160 }} align="center">
                     {item.user.firstName}
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="right">
-                    <IconButton>
+                    <IconButton onClick={() => handleEditItem(item)}>
                         <EditIcon/>
                     </IconButton>
                     <IconButton>
@@ -202,15 +201,15 @@ const Items = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Product ID</TableCell>
-                                <TableCell align="right">Name</TableCell>
-                                <TableCell align="right">SerialNumber</TableCell>
-                                <TableCell align="right">Brand</TableCell>
-                                <TableCell align="right">Category</TableCell>
-                                <TableCell align="right">Quantity</TableCell>
-                                <TableCell align="right">Price</TableCell>
-                                <TableCell align="right">Date Added</TableCell>
-                                <TableCell align="right">Created By</TableCell>
-                                <TableCell align="right">Actions</TableCell>
+                                <TableCell align="center">Name</TableCell>
+                                <TableCell align="center">SerialNumber</TableCell>
+                                <TableCell align="center">Brand</TableCell>
+                                <TableCell align="center">Category</TableCell>
+                                <TableCell align="center">Quantity</TableCell>
+                                <TableCell align="center">Price</TableCell>
+                                <TableCell align="center">Date Added</TableCell>
+                                <TableCell align="center">Created By</TableCell>
+                                <TableCell align="center">Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -246,4 +245,4 @@ const Items = () => {
     }
 }
 
-export default Items
+export default ItemsComp

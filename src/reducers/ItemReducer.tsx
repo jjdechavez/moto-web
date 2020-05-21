@@ -8,7 +8,9 @@ export type ItemStatus = {
 
 export interface iItemState {
     items: Items[];
+    currentItem: Items;
     getItemsStatus: ItemStatus;
+    getCurrentItemStatus: ItemStatus;
 }
 
 export const ItemReducer = (
@@ -47,6 +49,20 @@ export const ItemReducer = (
                 error: null
             }
             return { ...state, getItemsStatus: status }
+        }
+        case 'GET_CURRENT_ITEM': {
+            let status = {
+                ...state.getCurrentItemStatus,
+                sending: false,
+                sent: true
+            }
+
+            const currentItem = {
+                ...state.currentItem,
+                ...payload
+            }
+
+            return { ...state, getCurrentItemStatus: status, currentItem }
         }
         default:
             return state;
