@@ -10,7 +10,7 @@ export interface iItemState {
     items: Items[];
     currentItem: Items;
     getItemsStatus: ItemStatus;
-    getCurrentItemStatus: ItemStatus;
+    updateItemStatus: ItemStatus;
 }
 
 export const ItemReducer = (
@@ -51,18 +51,59 @@ export const ItemReducer = (
             return { ...state, getItemsStatus: status }
         }
         case 'GET_CURRENT_ITEM': {
-            let status = {
-                ...state.getCurrentItemStatus,
-                sending: false,
-                sent: true
-            }
-
             const currentItem = {
                 ...state.currentItem,
                 ...payload
             }
 
-            return { ...state, getCurrentItemStatus: status, currentItem }
+            return { ...state,  currentItem }
+        }
+        case 'UPDATE_ITEM': {
+            let status = {
+                ...state.updateItemStatus,
+                sending: true
+            }
+            return { ...state, updateItemStatus: status }
+        }
+        case 'UPDATE_ITEM_FULFILLED': {
+            let status = {
+                ...state.updateItemStatus,
+                sending: false,
+                sent: true
+            }
+
+            let currentItem = {
+                id: null,
+                name: '',
+                brand: '',
+                category: '',
+                serialNumber: '',
+                price: 0,
+                status: null,
+                quantity: null,
+                user: {
+                    id: null,
+                    firstName: ''
+                }
+            }
+
+            return { ...state, items: payload, updateItemStatus: status, currentItem }
+        }
+        case 'UPDATE_ITEM_ERROR': {
+            let status = {
+                ...state.updateItemStatus,
+                sent: false,
+                error: payload
+            }
+            return { ...state, getItemsStatus: status }
+        }
+        case 'UPDATE_ITEM_RESET': {
+            let status = {
+                sending: false,
+                sent: false,
+                error: null
+            }
+            return { ...state, updateItemStatus: status }
         }
         default:
             return state;

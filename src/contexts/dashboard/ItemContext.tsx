@@ -72,7 +72,7 @@ const ItemContextProvider = (props: any) => {
             sent: false,
             error: null
         },
-        getCurrentItemStatus: {
+        updateItemStatus: {
             sending: false,
             sent: false,
             error: null

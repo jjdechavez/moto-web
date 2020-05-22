@@ -17,6 +17,7 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
+import { ItemFormDialog } from "./form-dialog";
 
 const ColorLinearProgress = withStyles({
   colorPrimary: {
@@ -103,10 +104,15 @@ const ItemsComp = () => {
     const classes = useStyles();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const { setState, itemState, dispatch } = useContext(ItemContext);
+    const { state, setState, itemState, dispatch } = useContext(ItemContext);
     
-    const { items, getItemsStatus: { sending, sent, error } } = itemState;
+    const { 
+        items, 
+        getItemsStatus: { sending, sent, error }, 
+        currentItem 
+    } = itemState;
     const { setEdit } = setState;
+    const { edit } = state;
 
     console.log('render', render++)
 
@@ -196,6 +202,12 @@ const ItemsComp = () => {
     } else {
         return (
             <>
+                <ItemFormDialog 
+                    open={edit} 
+                    handleOpen={setEdit} 
+                    item={currentItem} 
+                    handleDispatch={dispatch} 
+                />
                 <TableContainer component={Paper}>
                     <Table className={classes.table} aria-label="simple table">
                         <TableHead>
