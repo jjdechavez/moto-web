@@ -105,6 +105,16 @@ export const ItemReducer = (
             }
             return { ...state, updateItemStatus: status }
         }
+        case 'DELETE_ITEM': {
+            let deleteItem = state.items.filter(item => item.id !== payload);
+            return {
+                ...state,
+                items: deleteItem
+            }
+        }
+        // case 'DELETE_ITEM_ERROR': {
+
+        // }
         default:
             return state;
     }

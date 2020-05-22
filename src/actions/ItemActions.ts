@@ -3,8 +3,9 @@ import { changePort } from "./AuthActions";
 import { Items } from "../contexts/dashboard/ItemContext";
 
 export type iDispatch = {
-    type: string;
-    payload?: string;
+    // type: string;
+    // payload?: any;
+    dispatch({ type, payload } : { type: string, payload?: any | null }): void;
 }
 
 export const fetchData = async (api: string) => {
@@ -60,6 +61,8 @@ export const updateItem = async (
             })
         });
         const json = await res.json();
+        // update the payload instead wait from backend get new items
+        // just pass the item id then filter the items on reducer
         dispatch({ type: 'UPDATE_ITEM_FULFILLED', payload: json.items.map((item: Items) => item) });
     } catch (error) {
         dispatch({ type: 'UPDATE_ITEM_ERROR', payload: error });
@@ -68,4 +71,19 @@ export const updateItem = async (
 
 export const resetUpdateItem = (dispatch: any) => {
     dispatch({ type: 'UPDATE_ITEM_RESET' });
+}
+
+export const deleteItem = async (dispatch: any, id: number) => {
+    dispatch({ type: 'DELETE_ITEM', payload: id });
+    const accessToken = getAccessToken(); 
+    await fetch(`http://localhost:${changePort}/item/remove`, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken ? `Bearer ${accessToken}` : ''
+        },
+        body: JSON.stringify({
+            id,
+        })
+    });
 }

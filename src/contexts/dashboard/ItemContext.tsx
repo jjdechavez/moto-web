@@ -20,22 +20,6 @@ export interface Items {
     user: ItemUser
 }
 
-export interface iItems {
-    id: number | null;
-    name: string;
-    brand: string;
-    category: string;
-    serialNumber?: string;
-    quantity: number | null;
-    dateAdded?: string;
-    price: number | null;
-    status?: number | null;
-    user?: {
-        id: number;
-        firstName: string;
-    }
-}
-
 export interface iItemContext {
     state: {
         edit: boolean;

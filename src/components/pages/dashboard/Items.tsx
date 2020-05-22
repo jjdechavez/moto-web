@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { ItemContext, Items } from "../../../contexts/dashboard/ItemContext";
-import { getItems, resetItemStatus } from "../../../actions/ItemActions";
+import { getItems, resetItemStatus, deleteItem } from "../../../actions/ItemActions";
 import { IconButton, useTheme, TableFooter, TablePagination } from "@material-ui/core";
 import { LinearProgress, withStyles } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
@@ -109,6 +109,7 @@ const ItemsComp = () => {
     const { 
         items, 
         getItemsStatus: { sending, sent, error }, 
+        updateItemStatus,
         currentItem 
     } = itemState;
     const { setEdit } = setState;
@@ -190,7 +191,7 @@ const ItemsComp = () => {
                         <EditIcon/>
                     </IconButton>
                     <IconButton>
-                        <DeleteIcon />
+                        <DeleteIcon onClick={() => deleteItem(dispatch, item.id!)}/>
                     </IconButton>
                 </TableCell>
             </TableRow>
@@ -206,7 +207,8 @@ const ItemsComp = () => {
                     open={edit} 
                     handleOpen={setEdit} 
                     item={currentItem} 
-                    handleDispatch={dispatch} 
+                    handleDispatch={dispatch}
+                    updateStatus={updateItemStatus}
                 />
                 <TableContainer component={Paper}>
                     <Table className={classes.table} aria-label="simple table">
