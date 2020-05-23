@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { ItemContext, Items } from "../../../contexts/dashboard/ItemContext";
-import { getItems, resetItemStatus, deleteItem } from "../../../actions/ItemActions";
+import { getItems, resetItemStatus } from "../../../actions/ItemActions";
 import { IconButton, useTheme, TableFooter, TablePagination } from "@material-ui/core";
 import { LinearProgress, withStyles } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
@@ -102,9 +102,10 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 
 const ItemsComp = () => {
     const classes = useStyles();
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const { state, setState, itemState, dispatch } = useContext(ItemContext);
+    const [page, setPage] = useState<number>(0);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(5);
+    const [toggleDialog, setToggleDialog] = useState<boolean>(false);
+    const { setState, itemState, dispatch } = useContext(ItemContext);
     
     const { 
         items, 
@@ -112,8 +113,7 @@ const ItemsComp = () => {
         updateItemStatus,
         currentItem 
     } = itemState;
-    const { setEdit } = setState;
-    const { edit } = state;
+    const { setEdit, setRemove } = setState;
 
     console.log('render', render++)
 
@@ -148,9 +148,14 @@ const ItemsComp = () => {
        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    const handleEditItem = (item: any) => {
-        dispatch({ type: 'GET_CURRENT_ITEM', payload: item });
-        setEdit(true);
+    const handleToggleDialog = (item: any, type: string) => {
+        setToggleDialog(true);
+        dispatch({ type: 'GET_CURRENT_ITEM', payload: item }); 
+        if (type === 'edit') {
+            setEdit(true);
+        } else if (type === 'remove') {
+            setRemove(true);
+        }
     }
 
     const renderItems = () => {
@@ -187,11 +192,11 @@ const ItemsComp = () => {
                     {item.user.firstName}
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="right">
-                    <IconButton onClick={() => handleEditItem(item)}>
-                        <EditIcon/>
+                    <IconButton onClick={() => handleToggleDialog(item, 'edit')}>
+                        <EditIcon />
                     </IconButton>
-                    <IconButton>
-                        <DeleteIcon onClick={() => deleteItem(dispatch, item.id!)}/>
+                    <IconButton onClick={() => handleToggleDialog(item, 'remove')}>
+                        <DeleteIcon/>
                     </IconButton>
                 </TableCell>
             </TableRow>
@@ -204,8 +209,8 @@ const ItemsComp = () => {
         return (
             <>
                 <ItemFormDialog 
-                    open={edit} 
-                    handleOpen={setEdit} 
+                    open={toggleDialog} 
+                    handleOpen={setToggleDialog} 
                     item={currentItem} 
                     handleDispatch={dispatch}
                     updateStatus={updateItemStatus}

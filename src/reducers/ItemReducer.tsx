@@ -56,7 +56,7 @@ export const ItemReducer = (
                 ...payload
             }
 
-            return { ...state,  currentItem }
+            return { ...state, currentItem }
         }
         case 'UPDATE_ITEM': {
             let status = {
