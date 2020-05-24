@@ -7,9 +7,10 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
 import { ItemContext, Items } from "../../../contexts/dashboard/ItemContext";
 import { getItems, resetItemStatus } from "../../../actions/ItemActions";
-import { IconButton, useTheme, TableFooter, TablePagination } from "@material-ui/core";
+import { IconButton, useTheme, TablePagination } from "@material-ui/core";
 import { LinearProgress, withStyles } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -18,6 +19,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import { ItemFormDialog } from "./form-dialog";
+import { Options } from "./Options";
 
 const ColorLinearProgress = withStyles({
   colorPrimary: {
@@ -31,8 +33,8 @@ const ColorLinearProgress = withStyles({
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-        flexShrink: 0,
-        marginLeft: theme.spacing(2.5),
+            flexShrink: 0,
+            padding: theme.spacing(1.5)
         },
         table: {
             minWidth: 500
@@ -96,6 +98,7 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
       >
         {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
       </IconButton>
+      <Options />
     </div>
   );
 }
@@ -192,12 +195,14 @@ const ItemsComp = () => {
                     {item.user.firstName}
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="right">
-                    <IconButton onClick={() => handleToggleDialog(item, 'edit')}>
-                        <EditIcon />
-                    </IconButton>
-                    <IconButton onClick={() => handleToggleDialog(item, 'remove')}>
-                        <DeleteIcon/>
-                    </IconButton>
+                    <Box display="flex" justifyContent="center">
+                        <IconButton onClick={() => handleToggleDialog(item, 'edit')}>
+                            <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleToggleDialog(item, 'remove')}>
+                            <DeleteIcon/>
+                        </IconButton>
+                    </Box>
                 </TableCell>
             </TableRow>
         ));
@@ -217,6 +222,24 @@ const ItemsComp = () => {
                 />
                 <TableContainer component={Paper}>
                     <Table className={classes.table} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                    colSpan={10}
+                                    count={items.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    SelectProps={{
+                                        inputProps: { 'aria-label': 'rows per page' },
+                                        native: true,
+                                    }}
+                                    onChangePage={handleChangePage}
+                                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                                    ActionsComponent={TablePaginationActions}
+                                />
+                            </TableRow>
+                        </TableHead>
                         <TableHead>
                             <TableRow>
                                 <TableCell>Product ID</TableCell>
@@ -239,24 +262,6 @@ const ItemsComp = () => {
                                 </TableRow>
                             )}
                         </TableBody>
-                        <TableFooter>
-                            <TableRow>
-                                <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                    colSpan={10}
-                                    count={items.length}
-                                    rowsPerPage={rowsPerPage}
-                                    page={page}
-                                    SelectProps={{
-                                        inputProps: { 'aria-label': 'rows per page' },
-                                        native: true,
-                                    }}
-                                    onChangePage={handleChangePage}
-                                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                                    ActionsComponent={TablePaginationActions}
-                                />
-                            </TableRow>
-                        </TableFooter>
                     </Table>
                 </TableContainer>
             </>
