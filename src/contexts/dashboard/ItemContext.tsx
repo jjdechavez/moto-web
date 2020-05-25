@@ -24,10 +24,12 @@ export interface iItemContext {
     state: {
         edit: boolean;
         remove: boolean;
+        create: boolean;
     };
     setState: {
         setEdit: React.Dispatch<React.SetStateAction<boolean>>;
         setRemove: React.Dispatch<React.SetStateAction<boolean>>;
+        setCreate: React.Dispatch<React.SetStateAction<boolean>>;
     };
     itemState: iItemState;
     dispatch({ type, payload } : { type: string, payload?: any | null }): void;
@@ -38,6 +40,7 @@ export const ItemContext = createContext({} as iItemContext);
 const ItemContextProvider = (props: any) => {
     const [edit, setEdit] = useState(false);
     const [remove, setRemove] = useState(false);
+    const [create, setCreate] = useState(false);
     const initialState = {
         items: [],
         currentItem: {
@@ -63,6 +66,11 @@ const ItemContextProvider = (props: any) => {
             sending: false,
             sent: false,
             error: null
+        },
+        createItemStatus: {
+            sending: false,
+            sent: false,
+            error: null
         }
     }
 
@@ -75,11 +83,13 @@ const ItemContextProvider = (props: any) => {
     const value ={
         state: {
             edit,
-            remove
+            remove,
+            create
         },
         setState: {
             setEdit,
-            setRemove
+            setRemove,
+            setCreate
         },
         itemState,
         dispatch

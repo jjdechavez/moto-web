@@ -98,7 +98,6 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
       >
         {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
       </IconButton>
-      <Options />
     </div>
   );
 }
@@ -116,7 +115,7 @@ const ItemsComp = () => {
         updateItemStatus,
         currentItem 
     } = itemState;
-    const { setEdit, setRemove } = setState;
+    const { setEdit, setRemove, setCreate } = setState;
 
     console.log('render', render++)
 
@@ -151,13 +150,16 @@ const ItemsComp = () => {
        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    const handleToggleDialog = (item: any, type: string) => {
+    const handleToggleDialog = (type: string, item?: Items ) => {
         setToggleDialog(true);
-        dispatch({ type: 'GET_CURRENT_ITEM', payload: item }); 
         if (type === 'edit') {
+            dispatch({ type: 'GET_CURRENT_ITEM', payload: item }); 
             setEdit(true);
         } else if (type === 'remove') {
+            dispatch({ type: 'GET_CURRENT_ITEM', payload: item }); 
             setRemove(true);
+        } else {
+            setCreate(true);
         }
     }
 
@@ -196,10 +198,10 @@ const ItemsComp = () => {
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="right">
                     <Box display="flex" justifyContent="center">
-                        <IconButton onClick={() => handleToggleDialog(item, 'edit')}>
+                        <IconButton onClick={() => handleToggleDialog('edit', item)}>
                             <EditIcon />
                         </IconButton>
-                        <IconButton onClick={() => handleToggleDialog(item, 'remove')}>
+                        <IconButton onClick={() => handleToggleDialog('remove', item)}>
                             <DeleteIcon/>
                         </IconButton>
                     </Box>
@@ -226,7 +228,7 @@ const ItemsComp = () => {
                             <TableRow>
                                 <TablePagination
                                     rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                    colSpan={10}
+                                    colSpan={7}
                                     count={items.length}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
@@ -237,7 +239,11 @@ const ItemsComp = () => {
                                     onChangePage={handleChangePage}
                                     onChangeRowsPerPage={handleChangeRowsPerPage}
                                     ActionsComponent={TablePaginationActions}
+                                    style={{ padding: 0 }}
                                 />
+                                <TableCell colSpan={3} style={{ padding: 0 }}>
+                                    <Options onToggleDialog={handleToggleDialog} />
+                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableHead>

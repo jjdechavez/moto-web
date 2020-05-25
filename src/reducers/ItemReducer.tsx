@@ -11,6 +11,7 @@ export interface iItemState {
     currentItem: Items;
     getItemsStatus: ItemStatus;
     updateItemStatus: ItemStatus;
+    createItemStatus: ItemStatus;
 }
 
 export const ItemReducer = (
@@ -112,9 +113,38 @@ export const ItemReducer = (
                 items: deleteItem
             }
         }
-        // case 'DELETE_ITEM_ERROR': {
-
-        // }
+        case 'CREATE_ITEM': {
+            let status = {
+                ...state.createItemStatus,
+                sending: true
+            }
+            return { ...state, createItemStatus: status }
+        }
+        case 'CREATE_ITEM_FULFILLED': {
+            let status = {
+                ...state.createItemStatus,
+                sending: false,
+                sent: true
+            };
+            return { ...state, createItemStatus: status, items: payload }
+        }
+        case 'CREATE_ITEM_ERROR': {
+            let status = {
+                ...state.createItemStatus,
+                sent: false,
+                error: payload
+            };
+            return { ...state, createItemStatus: status }
+        }
+        case 'CREATE_ITEM_RESET': {
+            let status = {
+                ...state.createItemStatus,
+                sending: false,
+                sent: false,
+                error: null
+            };
+            return { ...state, createItemStatus: status }
+        }
         default:
             return state;
     }

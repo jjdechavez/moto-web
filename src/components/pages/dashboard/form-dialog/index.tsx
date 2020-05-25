@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import { Items, ItemContext } from "../../../../contexts/dashboard/ItemContext";
-import { updateItem, deleteItem } from "../../../../actions/ItemActions";
+import { updateItem, deleteItem, createItem, resetCreateItem, resetUpdateItem } from "../../../../actions/ItemActions";
 import { ItemStatus } from "../../../../reducers/ItemReducer";
 
 interface iProps {
@@ -69,8 +69,8 @@ export const ItemFormDialog = (props: iProps) => {
     const [loading, setLoading] = useState(false);
     const timer = useRef<number | any>();
     const { 
-        state: { edit, remove },
-        setState: { setEdit, setRemove }
+        state: { edit, remove, create },
+        setState: { setEdit, setRemove, setCreate }
     } = useContext(ItemContext);
 
     useEffect(() => {
@@ -79,15 +79,31 @@ export const ItemFormDialog = (props: iProps) => {
 
     useEffect(() => {
         if (sent || error) {
-            handleDispatch({ type: 'UPDATE_ITEM_RESET' });
+            edit && resetUpdateItem(handleDispatch);
+            create && resetCreateItem(handleDispatch);
         }
-    }, [error, sent, handleDispatch]);
+    }, [error, sent, handleDispatch, create, edit]);
     
     const handleClose = () => {
         handleOpen(false);
+        setItem({
+            id: null,
+            name: '',
+            brand: '',
+            category: '',
+            serialNumber: '',
+            price: 0,
+            status: null,
+            quantity: null,
+            user: {
+                id: null,
+                firstName: ''
+            }
+        });
         setTimeout(() => {
             edit && setEdit(false);
             remove && setRemove(false);
+            create && setCreate(false);
         }, 150);
     };
     
@@ -101,125 +117,137 @@ export const ItemFormDialog = (props: iProps) => {
             setLoading(true);
             type === 'update' && updateItem(handleDispatch, item.id!, item.name, item.brand, item.category, +item.price, item.quantity!);
             type === 'remove' && deleteItem(handleDispatch, data);
+            type === 'create' && createItem(handleDispatch, item.name, item.serialNumber, item.brand, item.category, item.quantity!, item.price);
             timer.current = setTimeout(() => {
                 setLoading(false);
                 handleOpen(false);
                 setTimeout(() => {
                     type === 'update' && setEdit(false);
                     type === 'remove' && setRemove(false);
+                    type === 'create' && setCreate(false);
                 }, 100);
             }, 1500);
         }
     }
 
     let body: any = null;
+    let status: any = null;
+    let defaultBody = <>
+        <FormControl className={classes.textField} fullWidth>
+            <TextField 
+                label="Name"
+                name="name"
+                value={edit ? item.name || "" : item.name || ""} 
+                onChange={(e) => handleChange(e)}
+                variant="outlined" 
+                disabled={loading ? true : false}
+            />
+        </FormControl>
+        <FormControl className={classes.textField} fullWidth>
+            <TextField 
+                label="Serial Number" 
+                name="serialNumber"
+                value={edit ? item.serialNumber || "" : item.serialNumber || ""} 
+                onChange={e => handleChange(e)}
+                variant="outlined" 
+                disabled={loading ? true : false}
+            />
+        </FormControl>
+        <FormControl className={classes.textField} fullWidth>
+            <TextField 
+                label="Brand" 
+                name="brand"
+                value={edit ? item.brand || "" : item.brand || ""} 
+                onChange={handleChange}
+                variant="outlined" 
+                disabled={loading ? true : false}
+            />
+        </FormControl>
+        <FormControl className={classes.textField} fullWidth>
+            <TextField 
+                label="Category" 
+                name="category"
+                value={edit ? item.category || "" : item.category || ""} 
+                onChange={e => handleChange(e)}
+                variant="outlined" 
+                disabled={loading ? true : false}
+            />
+        </FormControl>
+        <FormControl className={classes.textField} fullWidth>
+            <TextField 
+                label="Quantity" 
+                name="quantity"
+                value={edit ? item.quantity || "" : item.quantity || ""} 
+                onChange={e => handleChange(e)}
+                type="number" 
+                InputLabelProps={{ shrink: true }} 
+                variant="outlined" 
+                disabled={loading ? true : false}
+            />
+        </FormControl>
+        <FormControl className={classes.textField} fullWidth>
+            <TextField 
+                label="Price"
+                name="price" 
+                value={edit ? item.price || "" : item.price || ""} 
+                onChange={e => handleChange(e)}
+                type="number" 
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                    startAdornment: <InputAdornment position="start">&#8369;</InputAdornment>,
+                }}
+                variant="outlined" 
+                disabled={loading ? true : false}
+            />
+        </FormControl> 
+    </>;
 
     if (edit) {
-        body = <>
-            <FormControl className={classes.textField} fullWidth>
-                <TextField 
-                    label="Name"
-                    name="name"
-                    value={item.name || ""} 
-                    onChange={(e) => handleChange(e)}
-                    variant="outlined" 
-                    disabled={loading ? true : false}
-                />
-            </FormControl>
-            <FormControl className={classes.textField} fullWidth>
-                <TextField 
-                    label="Serial Number" 
-                    name="serialNumber"
-                    value={item.serialNumber || ""} 
-                    onChange={e => handleChange(e)}
-                    variant="outlined" 
-                    disabled={loading ? true : false}
-                />
-            </FormControl>
-            <FormControl className={classes.textField} fullWidth>
-                <TextField 
-                    label="Brand" 
-                    name="brand"
-                    value={item.brand || ""} 
-                    onChange={handleChange}
-                    variant="outlined" 
-                    disabled={loading ? true : false}
-                />
-            </FormControl>
-            <FormControl className={classes.textField} fullWidth>
-                <TextField 
-                    label="Category" 
-                    name="category"
-                    value={item.category || ""} 
-                    onChange={e => handleChange(e)}
-                    variant="outlined" 
-                    disabled={loading ? true : false}
-                />
-            </FormControl>
-            <FormControl className={classes.textField} fullWidth>
-                <TextField 
-                    label="Quantity" 
-                    name="quantity"
-                    value={item.quantity || ""} 
-                    onChange={e => handleChange(e)}
-                    type="number" 
-                    InputLabelProps={{ shrink: true }} 
-                    variant="outlined" 
-                    disabled={loading ? true : false}
-                />
-            </FormControl>
-            <FormControl className={classes.textField} fullWidth>
-                <TextField 
-                    label="Price"
-                    name="price" 
-                    value={item.price || ""} 
-                    onChange={e => handleChange(e)}
-                    type="number" 
-                    InputLabelProps={{ shrink: true }}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">&#8369;</InputAdornment>,
-                    }}
-                    variant="outlined" 
-                    disabled={loading ? true : false}
-                />
-            </FormControl>
-        </>
+        status = 'Update';
+        body = defaultBody;
     } else if (remove) {
+        status = 'Remove';
         body = <>
            Are you sure to remove this item? 
         </>
+    } else {
+        status = 'Create';
+        body = defaultBody;
     }
 
     return (
         <Dialog open={props.open} onClose={handleClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">{edit ? 'Update' : 'Remove'} Item</DialogTitle>
+            <DialogTitle id="form-dialog-title">
+                {status} Item
+            </DialogTitle>
             <DialogContent>
                 {body}
             </DialogContent>
-        <DialogActions>
-            <div className={classes.wrapper}>
-                <Button 
-                    onClick={handleClose} 
-                    color="primary"
-                    disabled={loading && true}
-                >
-                    Cancel
-                </Button>                
-            </div>
-            <div className={classes.wrapper}>
-                <Button 
-                    onClick={() => edit 
-                        ? handleUpdate('update') 
-                        : handleUpdate('remove', item.id)
-                    } 
-                    color="primary"
-                    disabled={loading && true}
-                >
-                    {edit ? 'Update' : 'Remove'}
-                </Button> 
-                {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
-            </div>
-        </DialogActions>
+            <DialogActions>
+                <div className={classes.wrapper}>
+                    <Button 
+                        onClick={handleClose} 
+                        color="primary"
+                        disabled={loading && true}
+                    >
+                        Cancel
+                    </Button>                
+                </div>
+                <div className={classes.wrapper}>
+                    <Button 
+                        onClick={() => edit 
+                            ? handleUpdate('update') 
+                            : remove ? handleUpdate('remove', item.id)
+                            : handleUpdate('create')
+                        } 
+                        color="primary"
+                        disabled={loading && true}
+                    >
+                        {status}
+                    </Button> 
+                    {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                </div>
+            </DialogActions>
       </Dialog>
     )
 }

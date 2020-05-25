@@ -87,3 +87,42 @@ export const deleteItem = async (dispatch: any, id: number) => {
         })
     });
 }
+
+export const createItem = async (
+    dispatch: any,
+    name: string,
+    serialNumber: string, 
+    brand: string, 
+    category: string, 
+    quantity: number, 
+    price: number
+) => {
+    console.log('createItem', name, serialNumber, brand, category, quantity, price);
+    dispatch({ type: 'CREATE_ITEM' });
+    try {
+        const token = getAccessToken();
+        const res = await fetch(`http://localhost:${changePort}/item/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token && `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                name, 
+                serialNumber,
+                brand,
+                category,
+                quantity,
+                price
+            })
+        });
+        const json = await res.json();
+        dispatch({ type: 'CREATE_ITEM_FULFILLED', payload: json.items.map((item: Items) => item) })
+    } catch (error) {
+        dispatch({ type: 'CREATE_ITEM_ERROR', payload: error });
+    }
+}
+
+export const resetCreateItem = (dispatch: any) => {
+    dispatch({ type: 'CREATE_ITEM_RESET'});
+}
