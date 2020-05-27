@@ -25,11 +25,13 @@ export interface iItemContext {
         edit: boolean;
         remove: boolean;
         create: boolean;
+        checkout: boolean;
     };
     setState: {
         setEdit: React.Dispatch<React.SetStateAction<boolean>>;
         setRemove: React.Dispatch<React.SetStateAction<boolean>>;
         setCreate: React.Dispatch<React.SetStateAction<boolean>>;
+        setCheckout: React.Dispatch<React.SetStateAction<boolean>>;
     };
     itemState: iItemState;
     dispatch({ type, payload } : { type: string, payload?: any | null }): void;
@@ -41,8 +43,10 @@ const ItemContextProvider = (props: any) => {
     const [edit, setEdit] = useState(false);
     const [remove, setRemove] = useState(false);
     const [create, setCreate] = useState(false);
+    const [checkout, setCheckout] = useState(false);
     const initialState = {
         items: [],
+        cart: [],
         currentItem: {
             id: null,
             name: '',
@@ -84,12 +88,14 @@ const ItemContextProvider = (props: any) => {
         state: {
             edit,
             remove,
-            create
+            create,
+            checkout
         },
         setState: {
             setEdit,
             setRemove,
-            setCreate
+            setCreate,
+            setCheckout
         },
         itemState,
         dispatch

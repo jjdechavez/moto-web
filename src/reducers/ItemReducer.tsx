@@ -8,6 +8,7 @@ export type ItemStatus = {
 
 export interface iItemState {
     items: Items[];
+    cart: Items[];
     currentItem: Items;
     getItemsStatus: ItemStatus;
     updateItemStatus: ItemStatus;
@@ -144,6 +145,18 @@ export const ItemReducer = (
                 error: null
             };
             return { ...state, createItemStatus: status }
+        }
+        case 'INSERT_INTO_CART': {
+            let item = state.items.filter(item => item.id === payload);
+            let cart = [...state.cart, ...item];
+
+            return { ...state, cart } 
+        }
+        case 'REMOVE_INTO_CART': {
+            let item = state.items.filter(item => item.id !== payload);
+            let cart = [...state.cart, ...item];
+
+            return { ...state, cart } 
         }
         default:
             return state;

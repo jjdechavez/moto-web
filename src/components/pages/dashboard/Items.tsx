@@ -20,6 +20,7 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import { ItemFormDialog } from "./form-dialog";
 import { Options } from "./Options";
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
 const ColorLinearProgress = withStyles({
   colorPrimary: {
@@ -107,7 +108,7 @@ const ItemsComp = () => {
     const [page, setPage] = useState<number>(0);
     const [rowsPerPage, setRowsPerPage] = useState<number>(5);
     const [toggleDialog, setToggleDialog] = useState<boolean>(false);
-    const { setState, itemState, dispatch } = useContext(ItemContext);
+    const { state, setState, itemState, dispatch } = useContext(ItemContext);
     
     const { 
         items, 
@@ -116,6 +117,7 @@ const ItemsComp = () => {
         currentItem 
     } = itemState;
     const { setEdit, setRemove, setCreate } = setState;
+    const { checkout } = state;
 
     console.log('render', render++)
 
@@ -163,6 +165,10 @@ const ItemsComp = () => {
         }
     }
 
+    const handleInCartItem = (id: number) => {
+        dispatch({ type: 'INSERT_INTO_CART', payload: id });
+    }
+
     const renderItems = () => {
         return (rowsPerPage > 0
             ? items.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -198,12 +204,20 @@ const ItemsComp = () => {
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="right">
                     <Box display="flex" justifyContent="center">
-                        <IconButton onClick={() => handleToggleDialog('edit', item)}>
-                            <EditIcon />
-                        </IconButton>
-                        <IconButton onClick={() => handleToggleDialog('remove', item)}>
-                            <DeleteIcon/>
-                        </IconButton>
+                        {checkout ? (
+                            <IconButton onClick={() => handleInCartItem(item.id!)}>
+                                <AddShoppingCartIcon />
+                            </IconButton>
+                        ) : (
+                            <>
+                                <IconButton onClick={() => handleToggleDialog('edit', item)}>
+                                    <EditIcon />
+                                </IconButton>
+                                <IconButton onClick={() => handleToggleDialog('remove', item)}>
+                                    <DeleteIcon/>
+                                </IconButton>
+                            </>
+                        )}
                     </Box>
                 </TableCell>
             </TableRow>
