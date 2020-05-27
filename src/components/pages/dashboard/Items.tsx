@@ -10,17 +10,15 @@ import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import { ItemContext, Items } from "../../../contexts/dashboard/ItemContext";
 import { getItems, resetItemStatus } from "../../../actions/ItemActions";
-import { IconButton, useTheme, TablePagination } from "@material-ui/core";
+import { IconButton, TablePagination, Button } from "@material-ui/core";
 import { LinearProgress, withStyles } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import LastPageIcon from '@material-ui/icons/LastPage';
 import { ItemFormDialog } from "./form-dialog";
 import { Options } from "./Options";
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import CloseIcon from '@material-ui/icons/Close';
+import { TablePaginationActions } from "./table/TablePaginationActions";
 
 const ColorLinearProgress = withStyles({
   colorPrimary: {
@@ -39,68 +37,22 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         table: {
             minWidth: 500
+        },
+        quantityCell: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+        },
+        quantityBtn: {
+            minWidth: '10px'
         }
     }),
 );
 
 let render = 1;
 
-interface TablePaginationActionsProps {
-  count: number;
-  page: number;
-  rowsPerPage: number;
-  onChangePage: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void;
-}
-
-function TablePaginationActions(props: TablePaginationActionsProps) {
-  const classes = useStyles();
-  const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
-
-  const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, 0);
-  };
-
-  const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <div className={classes.root}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
-      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
-        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="next page"
-      >
-        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-        aria-label="last page"
-      >
-        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-      </IconButton>
-    </div>
-  );
+function priceFormat(x: number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 const ItemsComp = () => {
@@ -119,7 +71,7 @@ const ItemsComp = () => {
     const { setEdit, setRemove, setCreate } = setState;
     const { checkout } = state;
 
-    console.log('render', render++)
+    console.log('render', render++);
 
     useEffect(() => {
         getItems(dispatch);
@@ -134,7 +86,6 @@ const ItemsComp = () => {
         }
     }, [sent, error, dispatch]);
     
-
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, items.length - page * rowsPerPage);
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
@@ -148,10 +99,7 @@ const ItemsComp = () => {
         setPage(0);
     };
 
-    const priceFormat = (x: number) => {
-       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
+    
     const handleToggleDialog = (type: string, item?: Items ) => {
         setToggleDialog(true);
         if (type === 'edit') {
@@ -165,8 +113,14 @@ const ItemsComp = () => {
         }
     }
 
-    const handleInCartItem = (id: number) => {
-        dispatch({ type: 'INSERT_INTO_CART', payload: id });
+    const handleCartItem = (type: string, id: number) => {
+        if (type === 'toCart') {
+            console.log('toCart')
+            dispatch({ type: 'INSERT_INTO_CART', payload: id });
+        } else {
+            console.log('removeCart')
+            dispatch({ type: 'REMOVE_INTO_CART', payload: id })
+        }
     }
 
     const renderItems = () => {
@@ -191,7 +145,18 @@ const ItemsComp = () => {
                     {item.category}
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="center">
-                    {item.quantity}
+                    {item.status === 1
+                        ? (
+                            <Box component="div" className={classes.quantityCell}>
+                                <Button variant="outlined" className={classes.quantityBtn}>-</Button>
+                                <Box component="span" style={{ color: item.quantity!  ? 'red' : ''}}>{item.quantity}</Box>   
+                                <Button variant="outlined" className={classes.quantityBtn}>+</Button>
+                            </Box>
+                        ) : (
+                            <>
+                                {item.quantity}
+                            </>
+                        )}
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="center">
                     &#8369; {priceFormat(item.price)}
@@ -205,9 +170,18 @@ const ItemsComp = () => {
                 <TableCell style={{ width: 160 }} align="right">
                     <Box display="flex" justifyContent="center">
                         {checkout ? (
-                            <IconButton onClick={() => handleInCartItem(item.id!)}>
-                                <AddShoppingCartIcon />
-                            </IconButton>
+                            <>
+                                {item.status === 1 
+                                    ? (
+                                        <IconButton onClick={() => handleCartItem('removeFromTheCart',item.id!)}>
+                                            <CloseIcon />
+                                        </IconButton>
+                                    ):(
+                                        <IconButton onClick={() => handleCartItem('toCart',item.id!)}>
+                                            <AddShoppingCartIcon />
+                                        </IconButton>
+                                    )}
+                            </>
                         ) : (
                             <>
                                 <IconButton onClick={() => handleToggleDialog('edit', item)}>

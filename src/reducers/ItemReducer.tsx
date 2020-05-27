@@ -150,13 +150,29 @@ export const ItemReducer = (
             let item = state.items.filter(item => item.id === payload);
             let cart = [...state.cart, ...item];
 
-            return { ...state, cart } 
+            // Change the status of the item. 1 represent was in cart
+            let updateItems = state.items.map(item => {
+                if (item.id === payload) {
+                    item.status = 1;
+                    item.quantity = item.quantity! - 1;
+                }
+                return item;
+            });
+
+            return { ...state, cart, items: updateItems } 
         }
         case 'REMOVE_INTO_CART': {
-            let item = state.items.filter(item => item.id !== payload);
-            let cart = [...state.cart, ...item];
+            let cart = state.cart.filter(item => item.id !== payload);
 
-            return { ...state, cart } 
+            // Change the status of the item. 0 represent was remove on cart
+            let updateItems = state.items.map(item => {
+                if (item.id === payload) {
+                    item.status = 0;
+                }
+                return item;
+            });
+
+            return { ...state, cart, items: updateItems } 
         }
         default:
             return state;
