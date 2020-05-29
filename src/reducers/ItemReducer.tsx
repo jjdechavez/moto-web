@@ -154,6 +154,7 @@ export const ItemReducer = (
             let updateItems = state.items.map(item => {
                 if (item.id === payload) {
                     item.status = 1;
+                    console.log(item.quantity!, '-----------')
                     item.quantity = item.quantity! - 1;
                 }
                 return item;

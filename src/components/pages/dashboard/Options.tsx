@@ -21,11 +21,14 @@ interface iProps {
     onToggleDialog: (type: string, item?: Items) => void;
 }
 
+let render = 1;
+
 export const Options = (props: iProps) => {
     const classes = useStyles();
     const { state, setState } = useContext(ItemContext);
     const { checkout } = state;
     const { setCheckout } = setState;
+    console.log('option render', render++)
     return (
         <Box display="flex" justifyContent="flex-end" className={classes.box}>
             <Button
@@ -47,4 +50,4 @@ export const Options = (props: iProps) => {
             </Button>
         </Box>
     )
-}
+};

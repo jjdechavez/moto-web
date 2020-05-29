@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useCallback } from "react";
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -92,12 +92,21 @@ const ItemsComp = () => {
         setPage(newPage);
     };
 
+    // const handleChangePage = useCallback((event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+    //     setPage(newPage);
+    // }, [])
+
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
+    // const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    //     setRowsPerPage(parseInt(event.target.value, 10));
+    //     setPage(0);
+    // }, [])
 
     
     const handleToggleDialog = (type: string, item?: Items ) => {
@@ -113,15 +122,17 @@ const ItemsComp = () => {
         }
     }
 
-    const handleCartItem = (type: string, id: number) => {
+    const handleCartItem = useCallback((type: string, id: number) => {
         if (type === 'toCart') {
-            console.log('toCart')
             dispatch({ type: 'INSERT_INTO_CART', payload: id });
         } else {
-            console.log('removeCart')
             dispatch({ type: 'REMOVE_INTO_CART', payload: id })
         }
-    }
+    }, [dispatch])
+
+    const handleInCart = useCallback((id) => {
+        dispatch({ type: 'INSERT_INTO_CART', payload: id })
+    }, [dispatch]);
 
     const renderItems = () => {
         return (rowsPerPage > 0
@@ -177,7 +188,7 @@ const ItemsComp = () => {
                                             <CloseIcon />
                                         </IconButton>
                                     ):(
-                                        <IconButton onClick={() => handleCartItem('toCart',item.id!)}>
+                                        <IconButton onClick={() => handleInCart(item.id!)}>
                                             <AddShoppingCartIcon />
                                         </IconButton>
                                     )}

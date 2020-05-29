@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { makeStyles, Theme, createStyles, useTheme, IconButton } from "@material-ui/core";
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
@@ -21,10 +21,15 @@ interface TablePaginationActionsProps {
   onChangePage: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void;
 }
 
-export function TablePaginationActions(props: TablePaginationActionsProps) {
+let render = 1;
+
+export const TablePaginationActions = memo((
+  { count, page, rowsPerPage, onChangePage } : TablePaginationActionsProps
+) => {
   const classes = useStyles();
   const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
+
+  console.log('tablepagination action render', render++)
 
   const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onChangePage(event, 0);
@@ -70,4 +75,4 @@ export function TablePaginationActions(props: TablePaginationActionsProps) {
       </IconButton>
     </div>
   );
-}
+})
