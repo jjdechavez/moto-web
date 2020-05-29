@@ -147,17 +147,17 @@ export const ItemReducer = (
             return { ...state, createItemStatus: status }
         }
         case 'INSERT_INTO_CART': {
-            let item = state.items.filter(item => item.id === payload);
-            let cart = [...state.cart, ...item];
+            let itemFiltered = state.items.filter(itemFilter => itemFilter.id === payload);
+            let cart = [...state.cart, ...itemFiltered];
 
             // Change the status of the item. 1 represent was in cart
-            let updateItems = state.items.map(item => {
-                if (item.id === payload) {
-                    item.status = 1;
-                    console.log(item.quantity!, '-----------')
-                    item.quantity = item.quantity! - 1;
+            let updateItems = state.items.map(itemData => {
+                if (itemData.id === payload) {
+                    itemData.status = 1;
+                    console.log(itemData.quantity!, '-----------')
+                    itemData.quantity = itemData.quantity! - 1;
                 }
-                return item;
+                return itemData;
             });
 
             return { ...state, cart, items: updateItems } 

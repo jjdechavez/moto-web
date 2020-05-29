@@ -123,6 +123,7 @@ const ItemsComp = () => {
     }
 
     const handleCartItem = useCallback((type: string, id: number) => {
+        console.log('handleCartItem');
         if (type === 'toCart') {
             dispatch({ type: 'INSERT_INTO_CART', payload: id });
         } else {
@@ -130,9 +131,9 @@ const ItemsComp = () => {
         }
     }, [dispatch])
 
-    const handleInCart = useCallback((id) => {
-        dispatch({ type: 'INSERT_INTO_CART', payload: id })
-    }, [dispatch]);
+    // const handleInCart = useCallback((id) => {
+    //     dispatch({ type: 'INSERT_INTO_CART', payload: id })
+    // }, [dispatch]);
 
     const renderItems = () => {
         return (rowsPerPage > 0
@@ -188,7 +189,7 @@ const ItemsComp = () => {
                                             <CloseIcon />
                                         </IconButton>
                                     ):(
-                                        <IconButton onClick={() => handleInCart(item.id!)}>
+                                        <IconButton onClick={() => handleCartItem('toCart', item.id!)}>
                                             <AddShoppingCartIcon />
                                         </IconButton>
                                     )}
